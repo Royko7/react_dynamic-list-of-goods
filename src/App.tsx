@@ -8,17 +8,34 @@ import { Good } from './types/Good';
 export const App: React.FC = () => {
   const [goodList, setGoodlist] = useState<Good[]>([]);
   const [mode, setMode] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
+    setErrorMessage('');
     switch (mode) {
       case 'All':
-        getAll().then(goods => setGoodlist(goods));
+        getAll()
+          .then(goods => setGoodlist(goods))
+          .catch(() => {
+            setGoodlist([]);
+            setErrorMessage('Failed to load goods');
+          });
         break;
       case '5First':
-        get5First().then(goods => setGoodlist(goods));
+        get5First()
+          .then(goods => setGoodlist(goods))
+          .catch(() => {
+            setGoodlist([]);
+            setErrorMessage('Failed to load 5 аirst');
+          });
         break;
       case 'RedGoods':
-        getRedGoods().then(goods => setGoodlist(goods));
+        getRedGoods()
+          .then(goods => setGoodlist(goods))
+          .catch(() => {
+            setGoodlist([]);
+            setErrorMessage('Failed to load red goods');
+          });
         break;
 
       default:
@@ -50,6 +67,7 @@ export const App: React.FC = () => {
         Load red goods
       </button>
 
+      {errorMessage && <p>{errorMessage}</p>}
       <GoodsList goods={goodList} />
     </div>
   );
